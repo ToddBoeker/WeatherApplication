@@ -1,0 +1,16 @@
+# ninja log v6
+5	582	7507271005670848	WeatherApplication_autogen/timestamp	5c3bba9216b09ff4
+5	582	7507271005670848	WeatherApplication_autogen/mocs_compilation.cpp	5c3bba9216b09ff4
+5	582	7507271005670848	C:/Users/toddb/OneDrive/Documents/School/Fall 2024/OOP C++/Project/WeatherApplication/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/WeatherApplication_autogen/timestamp	5c3bba9216b09ff4
+5	582	7507271005670848	C:/Users/toddb/OneDrive/Documents/School/Fall 2024/OOP C++/Project/WeatherApplication/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/WeatherApplication_autogen/mocs_compilation.cpp	5c3bba9216b09ff4
+589	2189	7507271006304162	CMakeFiles/WeatherApplication.dir/main.cpp.obj	5b60327551b8e309
+586	2207	7507271006275126	CMakeFiles/WeatherApplication.dir/WeatherApplication_autogen/mocs_compilation.cpp.obj	a7621e8acf4119d8
+592	2234	7507271006334233	CMakeFiles/WeatherApplication.dir/mainwindow.cpp.obj	927f38f583692452
+2234	2428	7507271022752736	WeatherApplication.exe	489edae378b8db11
+96	397	7515024508314054	WeatherApplication_autogen/timestamp	5c3bba9216b09ff4
+96	397	7515024508314054	WeatherApplication_autogen/mocs_compilation.cpp	5c3bba9216b09ff4
+96	397	7515024508314054	C:/Users/toddb/OneDrive/Documents/School/Fall 2024/OOP C++/Project/WeatherApplication/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/WeatherApplication_autogen/timestamp	5c3bba9216b09ff4
+96	397	7515024508314054	C:/Users/toddb/OneDrive/Documents/School/Fall 2024/OOP C++/Project/WeatherApplication/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/WeatherApplication_autogen/mocs_compilation.cpp	5c3bba9216b09ff4
+399	3119	7515024511405482	CMakeFiles/WeatherApplication.dir/main.cpp.obj	5b60327551b8e309
+408	3170	7515024511408145	CMakeFiles/WeatherApplication.dir/mainwindow.cpp.obj	927f38f583692452
+3171	4189	7515024539115642	WeatherApplication.exe	489edae378b8db11
