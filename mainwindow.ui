@@ -17,8 +17,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>50</y>
+      <x>450</x>
+      <y>90</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>50</y>
+      <x>700</x>
+      <y>90</y>
       <width>81</width>
       <height>31</height>
      </rect>
@@ -46,8 +46,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>60</y>
+      <x>200</x>
+      <y>100</y>
       <width>41</width>
       <height>16</height>
      </rect>
@@ -60,7 +60,7 @@
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>140</y>
+      <y>150</y>
       <width>63</width>
       <height>20</height>
      </rect>
@@ -72,8 +72,8 @@
    <widget class="QLineEdit" name="txtProvince">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>50</y>
+      <x>510</x>
+      <y>90</y>
       <width>181</width>
       <height>28</height>
      </rect>
@@ -85,8 +85,8 @@
    <widget class="QLineEdit" name="txtCity">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>50</y>
+      <x>250</x>
+      <y>90</y>
       <width>191</width>
       <height>28</height>
      </rect>
@@ -98,8 +98,8 @@
    <widget class="QLineEdit" name="txtPostalCode">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>50</y>
+      <x>790</x>
+      <y>90</y>
       <width>121</width>
       <height>28</height>
      </rect>
@@ -112,7 +112,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>140</y>
+      <y>150</y>
       <width>81</width>
       <height>26</height>
      </rect>
@@ -121,23 +121,10 @@
      <string>1 Day</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioBtn1Day_2">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>140</y>
-      <width>112</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>7 Day</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btnWeather">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>390</x>
       <y>220</y>
       <width>251</width>
       <height>61</height>
@@ -150,8 +137,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>260</y>
+      <x>200</x>
+      <y>240</y>
       <width>161</width>
       <height>20</height>
      </rect>
@@ -160,32 +147,10 @@
      <string>Powered by Weatherbit</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="outputWeather">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>320</y>
-      <width>1051</width>
-      <height>381</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LayoutDirection::LeftToRight</enum>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="lineWrapMode">
-     <enum>QTextEdit::LineWrapMode::WidgetWidth</enum>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btnReset">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>730</x>
       <y>220</y>
       <width>111</width>
       <height>61</height>
@@ -193,6 +158,420 @@
     </property>
     <property name="text">
      <string>Reset</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>330</y>
+      <width>1151</width>
+      <height>421</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="Layout">
+     <item>
+      <widget class="QFrame" name="day1">
+       <layout class="QVBoxLayout" name="Day1">
+        <item>
+         <widget class="QLabel" name="Date1">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon1">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper1">
+          <item>
+           <widget class="QLabel" name="Temp1">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow">
+            <item>
+             <widget class="QLabel" name="Maxtemp1">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="MinTemp1">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="day2">
+       <layout class="QVBoxLayout" name="Day2">
+        <item>
+         <widget class="QLabel" name="Date2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper2">
+          <item>
+           <widget class="QLabel" name="Temp2">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow2">
+            <item>
+             <widget class="QLabel" name="Maxtemp2">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="MinTemp2">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="day3">
+       <layout class="QVBoxLayout" name="Day3">
+        <item>
+         <widget class="QLabel" name="Date3">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon3">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper3">
+          <item>
+           <widget class="QLabel" name="Temp3">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow3">
+            <item>
+             <widget class="QLabel" name="Maxtemp3">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="MinTemp3">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="day4">
+       <layout class="QVBoxLayout" name="Day4">
+        <item>
+         <widget class="QLabel" name="Date4">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon4">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper4">
+          <item>
+           <widget class="QLabel" name="Temp4">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow4">
+            <item>
+             <widget class="QLabel" name="Maxtemp4">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="MinTemp4">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="day5">
+       <layout class="QVBoxLayout" name="Day5">
+        <item>
+         <widget class="QLabel" name="Date5">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon5">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper5">
+          <item>
+           <widget class="QLabel" name="Temp5">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow5">
+            <item>
+             <widget class="QLabel" name="Maxtemp5">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="Mintemp522">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="day6">
+       <layout class="QVBoxLayout" name="Day6">
+        <item>
+         <widget class="QLabel" name="Date6">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon6">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper">
+          <item>
+           <widget class="QLabel" name="Temp6">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow6">
+            <item>
+             <widget class="QLabel" name="Maxtemp6">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="MinTemp6">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="day7">
+       <layout class="QVBoxLayout" name="Day7">
+        <item>
+         <widget class="QLabel" name="Date7">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Icon7">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="temper7">
+          <item>
+           <widget class="QLabel" name="Temp7">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hilow7">
+            <item>
+             <widget class="QLabel" name="Maxtemp7">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="MinTemp7">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="btnCurrentLocation">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>80</y>
+      <width>131</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Use
+Current Location</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblLocationInfo">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>270</y>
+      <width>651</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>24</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioBtn7Day">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>150</y>
+      <width>112</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>7 Day</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblGreeting">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>411</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Greeting</string>
     </property>
    </widget>
   </widget>
