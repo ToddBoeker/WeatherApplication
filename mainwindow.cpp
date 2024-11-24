@@ -17,19 +17,13 @@
 #include <QApplication>
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QDate>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QLabel>
+
+using namespace std;
+
 #include <QRegularExpressionValidator>
 #include <QRegularExpression>
 #include <QStringList>
 #include <QMap>
-#include <QTime>
-
-
-using namespace std;
-
 
 // List of Canadian provinces for validation
 const QStringList CANADIAN_PROVINCES = {"AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"};
@@ -62,8 +56,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     fetchWeatherDataSlot();
 
+    // Initially hide the location frame
+    ui->locationFrame->setVisible(false);
+
     connect(networkManager, &QNetworkAccessManager::finished, this, &MainWindow::handleWeatherData);
-    connect(ui->btnCurrentLocation, &QPushButton::clicked, this, &MainWindow::fetchWeatherDataSlot);
+    connect(ui->btnCurrentLocation, &QPushButton::clicked, this, &MainWindow::fetchCurrentLocation);
 
     // Set up the validator
     QRegularExpression regExp("[a-zA-Z\\s\\.\\-']+");
@@ -74,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent)
     QRegularExpression postalCodeRegExp("^[A-Za-z]\\d[A-Za-z] ?\\d[A-Za-z]\\d$");
     QRegularExpressionValidator *postalCodeValidator = new QRegularExpressionValidator(postalCodeRegExp, this);
     ui->txtPostalCode->setValidator(postalCodeValidator);
-
 
     QString greetingMessage;
     QTime currentTime = QTime::currentTime();
@@ -88,15 +84,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     QString finalMessage = QString("%1 Get the latest forecast for your area").arg(greetingMessage);
     ui->lblGreeting->setText(finalMessage);
-    ui->lblGreeting->setStyleSheet("QLabel { color: gold; }");
-
 
     QPixmap background(":/images/Default.jpeg");
     background = background.scaled(this->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     QPalette palette = this->palette();
     palette.setBrush(QPalette::Window, background);
     this->setPalette(palette);
-
 
     // Ensure QLabel is large enough
     ui->lblGreeting->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -129,6 +122,23 @@ MainWindow::MainWindow(QWidget *parent)
         ":/images/Night.jpeg"       // 8 Night
     };
 
+    //adds all files from saved directory to combobox
+    QDir dir("Saved");
+    if (!dir.exists())
+    {
+        dir.mkpath(".");
+        qDebug() << "directory created";
+    }
+
+    QFileInfoList fileList = dir.entryInfoList(QDir::Files);
+
+    // Iterate through each file and add to combobox
+    for (const QFileInfo &fileInfo : fileList)
+    {
+        ui->comboBox->addItem(fileInfo.baseName());
+    }
+
+
 }
 
 void MainWindow::fetchWeatherDataSlot() {
@@ -160,36 +170,31 @@ void MainWindow::handleWeatherData(QNetworkReply* reply) {
 
         // Save JSON data to file
         QDir dir;
-        if (!dir.exists("Cities")) {
+        if (!dir.exists("Cities"))
+        {
             dir.mkdir("Cities");
         }
         QString cityName = jsonObj["city_name"].toString();
-        if (cityName.isEmpty()) {
+
+        if(cityName == "")
+        {
             QString postalCode = ui->txtPostalCode->text().trimmed();
             cityName = postalCode;
+
         }
         cityName += day;
-        QFile jsonFile("Cities/" + cityName + day + ".json");
+        QFile jsonFile("Cities/" + cityName + ".json");
         jsonFile.open(QFile::WriteOnly);
         jsonFile.write(jsonDoc.toJson());
         jsonFile.close();
-
         // Display the weather data
         displayWeatherData(jsonObj);
-
-        // Determine the suitable background image
-        QString weather = dataArray[0].toObject()["weather"].toObject()["description"].toString();
-        qDebug() << "Weather Description from API:" << weather;
-        qDebug() << "bgImages size:" << bgImages.size();  // Ensure bgImages size is logged
-
-        QString bgImage = determineBackgroundImage(weather);
-        qDebug() << "Selected Background Image:" << bgImage;  // Log selected background image
-
-        // Set the background image
-        setAppBackground(bgImage);
     }
     reply->deleteLater();
 }
+
+
+
 
 
 QString MainWindow::determineBackgroundImage(const QString &weather) {
@@ -197,30 +202,21 @@ QString MainWindow::determineBackgroundImage(const QString &weather) {
 
     if (bgImages.size() < 9) {
         qDebug() << "Error: bgImages does not have enough elements!";
-        return ":/images/Default.jpeg";  // Return an error image
+        return ":/images/Error.jpeg";  // Return an error image
     }
 
-    QTime currentTime = QTime::currentTime();
-    QTime duskTime(20, 0); // Assuming dusk is 8:00 PM
-    bool isNight = currentTime > duskTime || currentTime < QTime(8, 0); // Night time is from 8:00 PM to 6:00 AM
+    if (weather.contains("Clear", Qt::CaseInsensitive)) return bgImages[0];
+    if (weather.contains("Cloud", Qt::CaseInsensitive) || weather.contains("Overcast", Qt::CaseInsensitive)) return bgImages[1];
+    if (weather.contains("Rain", Qt::CaseInsensitive) || weather.contains("Drizzle", Qt::CaseInsensitive) || weather.contains("Light rain", Qt::CaseInsensitive)) return bgImages[2];
+    if (weather.contains("Snow", Qt::CaseInsensitive) || weather.contains("Sleet", Qt::CaseInsensitive)) return bgImages[3];
+    if (weather.contains("Fog", Qt::CaseInsensitive) || weather.contains("Mist", Qt::CaseInsensitive) || weather.contains("Haze", Qt::CaseInsensitive)) return bgImages[4];
+    if (weather.contains("Storm", Qt::CaseInsensitive) || weather.contains("Thunderstorm", Qt::CaseInsensitive)) return bgImages[5];
+    if (weather.contains("Wind", Qt::CaseInsensitive) || weather.contains("Breeze", Qt::CaseInsensitive)) return bgImages[6];
+    if (weather.contains("Freezing Rain", Qt::CaseInsensitive) || weather.contains("Ice Pellets", Qt::CaseInsensitive)) return bgImages[7];
 
-    if (isNight) {
-        if (weather.contains("Night", Qt::CaseInsensitive)) return bgImages[8]; // Assume bgImages[8] is your night clear image
-    } else {
-        if (weather.contains("Clear", Qt::CaseInsensitive)) return bgImages[0];
-        if (weather.contains("Cloud", Qt::CaseInsensitive) || weather.contains("Overcast", Qt::CaseInsensitive)) return bgImages[1];
-        if (weather.contains("Rain", Qt::CaseInsensitive) || weather.contains("Drizzle", Qt::CaseInsensitive) || weather.contains("Light rain", Qt::CaseInsensitive)) return bgImages[2];
-        if (weather.contains("Snow", Qt::CaseInsensitive) || weather.contains("Sleet", Qt::CaseInsensitive)) return bgImages[3];
-        if (weather.contains("Fog", Qt::CaseInsensitive) || weather.contains("Mist", Qt::CaseInsensitive) || weather.contains("Haze", Qt::CaseInsensitive)) return bgImages[4];
-        if (weather.contains("Storm", Qt::CaseInsensitive) || weather.contains("Thunderstorm", Qt::CaseInsensitive)) return bgImages[5];
-        if (weather.contains("Wind", Qt::CaseInsensitive) || weather.contains("Breeze", Qt::CaseInsensitive)) return bgImages[6];
-        if (weather.contains("Freezing Rain", Qt::CaseInsensitive) || weather.contains("Ice Pellets", Qt::CaseInsensitive)) return bgImages[7];
-    }
-
-    // Default if no match
-    return ":/images/Default.jpeg";
+    // Default to the night image if no match
+    return bgImages[8];
 }
-
 
 
 
@@ -268,7 +264,6 @@ MainWindow::~MainWindow() {
 void MainWindow::on_btnWeather_clicked() {
     clearForecastDisplay();
 
-
     QString city = ui->txtCity->text().trimmed().toUpper();
     QString province = ui->txtProvince->text().trimmed().toUpper();
     QString postalCode = ui->txtPostalCode->text().trimmed().toUpper();
@@ -284,14 +279,17 @@ void MainWindow::on_btnWeather_clicked() {
         QMessageBox::warning(this, "Input Error", "You must either provide both City and Province or a Postal Code.");
         return;
     }
+
     if ((!city.isEmpty() || !province.isEmpty()) && !QRegularExpression("^[a-zA-Z\\s\\.\\-']+$").match(city + province).hasMatch()) {
         QMessageBox::warning(this, "Input Error", "City and Province fields must only contain letters, spaces, dots, hyphens, and apostrophes.");
         return;
     }
+
     if (!postalCode.isEmpty() && !QRegularExpression("^[A-Za-z]\\d[A-Za-z] ?\\d[A-Za-z]\\d$").match(postalCode).hasMatch()) {
         QMessageBox::warning(this, "Input Error", "Postal code must be in the format A1A 1A1.");
         return;
     }
+
     if (!province.isEmpty() && !CANADIAN_PROVINCES.contains(province)) {
         QMessageBox::warning(this, "Input Error", "The province must be a valid Canadian province abbreviation.");
         return;
@@ -304,10 +302,26 @@ void MainWindow::on_btnWeather_clicked() {
         locationText = QString("Selected Location: %1, %2").arg(city, province);
     }
 
-
-
-
     ui->lblLocationInfo->setText(locationText); // Update lblLocationInfo only here
+
+    // Apply bold, white color style to the location label text
+    ui->lblLocationInfo->setStyleSheet("QLabel { color : white; font-weight: bold; padding: 5px; }");
+    ui->lblLocationInfo->setAlignment(Qt::AlignCenter);
+
+    // Define the style for the locationFrame (semi-transparent black background with rounded corners)
+    QString frameStyle = R"(
+        QFrame#locationFrame {
+            background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent black background */
+            border-radius: 10px;                    /* Rounded corners */
+            padding: 10px;                          /* Padding inside the frame */
+        }
+    )";
+
+    // Apply the frame style to the locationFrame
+    ui->locationFrame->setStyleSheet(frameStyle);
+
+    // Make the location frame visible after setting the location text
+    ui->locationFrame->setVisible(true);
 
     // Get the forecast duration based on the selected radio button
     int days = ui->radioBtn1Day->isChecked() ? 1 : 7;
@@ -319,25 +333,24 @@ void MainWindow::on_btnWeather_clicked() {
     } else {
         urlString = QString("https://api.weatherbit.io/v2.0/forecast/daily?key=f44722b654a9490e8ddd26c1a152aa60&units=metric&days=%1&city=%2,%3").arg(days).arg(city).arg(province);
     }
+
     QString fileName;
     QString day = QString::number(days);
 
-    if(city.isEmpty())
-    {
+    // Save city to favorited cities (if checkbox is clicked)
+    saveCity(city, province, postalCode);
+
+    if (city.isEmpty()) {
         fileName = "Cities/" + postalCode;
-    }
-    else
-    {
+    } else {
         fileName = "Cities/" + city;
     }
-    fileName += "-" + day + "day";
+    fileName += day;
     fileName += ".json";
     QFile file(fileName);
 
-    if (file.exists())
-    {
-        if (file.open(QIODevice::ReadOnly))
-        {
+    if (file.exists()) {
+        if (file.open(QIODevice::ReadOnly)) {
             QByteArray fileData = file.readAll();
             file.close();
             // Parse the JSON content from the file
@@ -345,20 +358,15 @@ void MainWindow::on_btnWeather_clicked() {
             QJsonObject jsonObj = jsonDoc.object();
             // Display the weather data from the file
             displayWeatherData(jsonObj);
-        }
-        else
-        {
+        } else {
             QMessageBox::warning(this, "File Error", "Failed to open the file.");
         }
-    }
-    else
-    {
+    } else {
         QUrl url(urlString);
         QNetworkRequest request(url);
         networkManager->get(request);
     }
 }
-
 
 
 void MainWindow::handleLocationResponse(QNetworkReply* reply) {
@@ -403,10 +411,23 @@ void MainWindow::fetchWeatherData() {
 }
 
 
-// Assume displayWeatherData is part of the MainWindow class
-void MainWindow::displayWeatherData(const QJsonObject &jsonObj)
-{
+#include <QDate>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QLabel>
+
+// displayWeatherData is part of the MainWindow class
+void MainWindow::displayWeatherData(const QJsonObject &jsonObj) {
     QJsonArray dataArray = jsonObj["data"].toArray();
+
+    QString weather = dataArray[0].toObject()["weather"].toObject()["description"].toString();
+    qDebug() << "Weather Description from API:" << weather;
+
+    QString bgImage = determineBackgroundImage(weather);
+    qDebug() << "Selected Background Image:" << bgImage;
+
+    // Set the background image
+    setAppBackground(bgImage);
 
     QLabel* dateLabels[7] = {ui->Date1, ui->Date2, ui->Date3, ui->Date4, ui->Date5, ui->Date6, ui->Date7};
     QLabel* iconLabels[7] = {ui->Icon1, ui->Icon2, ui->Icon3, ui->Icon4, ui->Icon5, ui->Icon6, ui->Icon7};
@@ -417,8 +438,7 @@ void MainWindow::displayWeatherData(const QJsonObject &jsonObj)
 
     int count = 0;
 
-    for (const QJsonValue &value : dataArray)
-    {
+    for (const QJsonValue &value : dataArray) {
         QJsonObject dataObj = value.toObject();
         QString dateString = dataObj["datetime"].toString();
 
@@ -445,25 +465,33 @@ void MainWindow::displayWeatherData(const QJsonObject &jsonObj)
         tempLabels[count]->setText(temp);
         maxtempLabels[count]->setText(maxtemp);
         mintempLabels[count]->setText(mintemp);
+
+        // Apply bold and white style for weather text, date, and min/max temperatures
+        tempLabels[count]->setStyleSheet("QLabel { font-weight: bold; color: white; font-size: 48px; }");
+        dateLabels[count]->setStyleSheet("QLabel { font-weight: bold; color: white; }");
+        maxtempLabels[count]->setStyleSheet("QLabel { font-weight: bold; color: white; }");
+        mintempLabels[count]->setStyleSheet("QLabel { font-weight: bold; color: white; }");
+
         dateLabels[count]->setAlignment(Qt::AlignCenter);
         iconLabels[count]->setAlignment(Qt::AlignCenter);
         tempLabels[count]->setAlignment(Qt::AlignCenter);
         maxtempLabels[count]->setAlignment(Qt::AlignCenter);
         mintempLabels[count]->setAlignment(Qt::AlignCenter);
 
-
-QString style = R"(
-    QFrame#day1, QFrame#day2, QFrame#day3, QFrame#day4,
-    QFrame#day5, QFrame#day6, QFrame#day7 {
-        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-        border-radius: 8px; /* Rounded corners */
-    }
-)";
+        QString style = R"(
+            QFrame#day1, QFrame#day2, QFrame#day3, QFrame#day4,
+            QFrame#day5, QFrame#day6, QFrame#day7 {
+                background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+                border-radius: 8px; /* Rounded corners */
+            }
+        )";
 
         days[count]->setStyleSheet(style);
         count++;
     }
 }
+
+
 
 
 void MainWindow::on_btnReset_clicked() {
@@ -496,12 +524,12 @@ void MainWindow::on_btnReset_clicked() {
     ui->day5->setStyleSheet("background-color: rgba(0, 0, 0, 0); border-radius: 8px;");
     ui->day6->setStyleSheet("background-color: rgba(0, 0, 0, 0); border-radius: 8px;");
     ui->day7->setStyleSheet("background-color: rgba(0, 0, 0, 0); border-radius: 8px;");
+    ui->locationFrame->setStyleSheet("background-color: rgba(0, 0, 0, 0); border-radius: 8px;");
 }
 
 
-
-void MainWindow::fetchCurrentLocation() {
-    QString ipInfoUrl = "https://ipinfo.io/json?token=4b659d5b3268a9";  // Replace with your actual token
+void MainWindow::fetchCurrentLocation() { // jakob 1
+    QString ipInfoUrl = "https://ipinfo.io/json?token=4b659d5b3268a9";
     QUrl url(ipInfoUrl);
     QNetworkRequest request(url);
 
@@ -510,7 +538,7 @@ void MainWindow::fetchCurrentLocation() {
 }
 
 
-void MainWindow::handleLocationData(QNetworkReply *reply) {
+void MainWindow::handleLocationData(QNetworkReply *reply) { // jakob 2
     if (reply->error() != QNetworkReply::NoError) {
         qDebug() << "Error in network reply:" << reply->errorString();
         reply->deleteLater();
@@ -561,7 +589,7 @@ void MainWindow::clearForecastDisplay() {
 }
 
 
-void MainWindow::testWeatherData() {
+void MainWindow::testWeatherData() { // jakob 3
     clearForecastDisplay();
     QString mockApiResponse = R"({
 
@@ -607,6 +635,8 @@ void MainWindow::testWeatherData() {
         count++;
     }
 
+
+
     // Clear any remaining labels if less than 7 days are displayed
     for (int i = count; i < 7; ++i) {
         dateLabels[i]->clear();
@@ -614,4 +644,182 @@ void MainWindow::testWeatherData() {
         tempLabels[i]->clear();
     }
 
+}
+
+void MainWindow::on_showWeather_clicked()
+{
+    clearForecastDisplay();
+
+    QString fileName;
+    QString locationText;
+    QString city;
+    QString province;
+    QString postalCode;
+    int days = 7;
+
+    //get the selected file name from combobox
+    fileName = ui->comboBox->currentText();
+
+    QFile file("Saved/" + fileName + ".json");
+
+    //first check if file exists in previously requested("cities/") directory
+
+    QFile cityFile("Cities/" + fileName + "7.json");
+    if (cityFile.exists())
+    {
+        if (cityFile.open(QIODevice::ReadOnly))
+        {
+            QByteArray fileData = cityFile.readAll();
+            cityFile.close();
+            // Parse the JSON content from the file
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(fileData);
+            QJsonObject jsonObj = jsonDoc.object();
+            city = jsonObj["city_name"].toString();
+            province = jsonObj["state_code"].toString();
+            postalCode = fileName;
+
+            locationText = city.isEmpty() ? QString("Selected Location: %1").arg(postalCode) : QString("Selected Location: %1, %2").arg(city).arg(province);
+            ui->lblLocationInfo->setText(locationText);
+            // Display the weather data from the file
+            displayWeatherData(jsonObj);
+        }
+        else
+        {
+            QMessageBox::warning(this, "File Error", "Failed to open the file.");
+        }
+    }
+
+    else
+    {
+        //fetch weather data using saved city information (city_name and State_code)
+        if (file.exists())
+        {
+            if (file.open(QIODevice::ReadOnly))
+            {
+                QByteArray fileData = file.readAll();
+                file.close();
+                // Parse the JSON content from the file
+                QJsonDocument jsonDoc = QJsonDocument::fromJson(fileData);
+                QJsonObject jsonObj = jsonDoc.object();
+                city = jsonObj["city_name"].toString();
+                province = jsonObj["state_code"].toString();
+                postalCode = jsonObj["postal_code"].toString();
+
+                locationText = city.isEmpty() ? QString("Selected Location: %1").arg(postalCode) : QString("Selected Location: %1, %2").arg(city).arg(province);
+                ui->lblLocationInfo->setText(locationText);
+
+                // Display the weather data from the file
+                QString urlString;
+
+                if(!city.isEmpty() && !province.isEmpty())
+                {
+                    urlString = QString("https://api.weatherbit.io/v2.0/forecast/daily?key=840faa516f9c455c962138131caa886c&units=metric&days=%1&city=%2,%3").arg(days).arg(city).arg(province);
+                }
+                else
+                {
+                    urlString = QString("https://api.weatherbit.io/v2.0/forecast/daily?key=840faa516f9c455c962138131caa886c&units=metric&days=%1&postal_code=%2").arg(days).arg(postalCode);
+                }
+
+                qDebug() << "api request sent";
+                QUrl url(urlString);
+                QNetworkRequest request(url);
+                networkManager->get(request);
+            }
+            else
+            {
+                QMessageBox::warning(this, "File Error", "Failed to open the file.");
+            }
+        }
+    }
+
+}
+
+void MainWindow::on_removeButton_clicked()
+{
+    //remove city from saved folder
+    qDebug() << ui->comboBox->currentText();
+    QString filepath = ui->comboBox->currentText() + ".json";
+    removeFile("Saved/"+filepath);
+
+    //remove city from combobox
+    ui->comboBox->removeItem(ui->comboBox->currentIndex());
+}
+
+void MainWindow::removeFile(const QString &filePath)
+{
+    QFile file(filePath);
+    if (file.exists())
+    {
+        if (file.remove())
+        {
+            qDebug() << "File removed successfully.";
+        }
+        else
+        {
+            qDebug() << "Failed to remove file:" << file.errorString();
+        }
+    }
+    else
+    {
+        qDebug() << "File does not exist.";
+    }
+}
+
+//saves city_name and state_code value to .json file
+void MainWindow::saveCity(QString city, QString province, QString postalCode)
+{
+    if(ui->checkBox->isChecked())
+
+    {
+        QString fileName;
+        QString displayName;
+
+        if(!city.isEmpty() && !province.isEmpty())
+        {
+            displayName = city;
+            fileName = "Saved/" + city + ".json";
+        }
+        else
+        {
+            displayName = postalCode;
+            fileName = "Saved/" + postalCode + ".json";
+        }
+
+        /*QDir dir("Saved");
+        if (!dir.exists())
+        {
+            dir.mkpath(".");
+            qDebug() << "directory created";
+        }*/
+
+        QFile savedCity(fileName);
+        //if the city is already saved, nothing happens
+        if(!savedCity.exists())
+        {
+            QJsonObject jsonObj;
+            jsonObj["city_name"] = city;
+            jsonObj["state_code"] = province;
+            jsonObj["postal_code"] = postalCode;
+
+            QJsonDocument jsonDoc(jsonObj);
+
+            if(savedCity.open(QFile::WriteOnly))
+            {
+                savedCity.write(jsonDoc.toJson());
+                savedCity.close();
+                //add city to combobox
+                ui->comboBox->addItem(displayName);
+                qDebug() << "File saved Successfully: " << fileName;
+            }
+            else
+            {
+                qDebug() << "Faild to open file for writing: " << savedCity.errorString();
+            }
+
+        }
+        else
+        {
+            qDebug() << "File already exists: " << fileName;
+        }
+    }
 }

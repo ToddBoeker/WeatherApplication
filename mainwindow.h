@@ -38,11 +38,16 @@ private slots:
     void fetchWeatherDataSlot();
     void on_btnWeather_clicked();
     void on_btnReset_clicked();
+    void on_showWeather_clicked();
+    void on_removeButton_clicked();
+
     void displayWeatherData(const QJsonObject &jsonObj);
     void testWeatherData();
     void clearForecastDisplay();
     void handleLocationData(QNetworkReply *reply);
     void normalizeInput(QString text);
+    void removeFile(const QString &filePath);
+    void saveCity(QString city, QString province, QString postalCode);
 
 
 private:
